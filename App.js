@@ -13,7 +13,7 @@ export default function App() {
     {label: 'April 2026', value: '04'},
   ];
   
-  const [currentmonthValue, setcurrentmonthValue] = React.useState(currentMonths[0].value);
+  const [currentmonthValue, setcurrentmonthValue] = useState(currentMonths[0].value);
 
   const profilePicturePressed = async () => {
     alert('Profile Picture pressed!');
