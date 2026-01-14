@@ -1,17 +1,22 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dropdown } from 'react-native-element-dropdown';
+import {WeekCalendar} from 'react-native-calendars';
 import React from 'react';
 import { useState } from 'react';
 
 
 export default function App() {
-  const currentMonths = [
-    {label: 'January 2026', value: '01'},
-    {label: 'February 2026', value: '02'},
-    {label: 'March 2026', value: '03'},
-    {label: 'April 2026', value: '04'},
-  ];
+  const currentMonths = Array.from({ length: 4 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + i);
+  
+    return {
+      label: date.toLocaleString('default', { month: 'long', year: 'numeric' }),
+      value: String(date.getMonth() + 1).padStart(2, '0'),
+    };
+  });
+  
   
   const [currentmonthValue, setcurrentmonthValue] = useState(currentMonths[0].value);
 
@@ -36,10 +41,14 @@ export default function App() {
           valueField="value"
           value={currentmonthValue}
           onChange={item => {
-            setcurrentmonthValue(item.value)}}
+            setcurrentmonthValue(item.value);
+            console.log('selected month:', item.label, item.value);
+          }}
           selectedTextStyle={styles.selectedTextStyle}
           renderItem={item => <Text style={styles.itemText}>{item.label}</Text>}
         />
+      </View>
+      <View style={styles.weekdaySelector}>
       </View>
     </SafeAreaView>
   );
@@ -49,7 +58,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FBF7F2',
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
   },
   header: {
     marginTop: 20,
