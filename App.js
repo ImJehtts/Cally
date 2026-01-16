@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { Dropdown } from 'react-native-element-dropdown';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Weekdays from './components/weekdays';
 
 
 export default function App() {
+  
   const currentMonths = Array.from({ length: 4 }, (_, i) => {
     const date = new Date();
     date.setMonth(date.getMonth() + i);
@@ -17,20 +18,22 @@ export default function App() {
     };
   });
 
+  const [weeksintoFuture, setweeksintoFuture] = useState(0);
+  const [currentWeek, setCurrentWeek] = useState([]);
 
-  const [currentWeek, setCurrentWeek] = useState(() => {
+  useEffect(() => {
     const currentDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
-      date.setDate(date.getDate() + i - date.getDay() + 1); 
+      date.setDate(date.getDate() + i - date.getDay() + (1+(weeksintoFuture*7))); 
   
       return {
-        day: date.toLocaleString('default', { weekday: 'short' }),
+        day: date.toLocaleString('default', {weekday: 'short'}),
         value: date.getDate(),
-        selected: i === new Date().getDay() - 1, 
+        selected: i === new Date().getDay() - 1 && weeksintoFuture === 0,      
       };
     });
-    return currentDays; 
-  });
+    setCurrentWeek(currentDays); 
+  }, [weeksintoFuture]);
   
   const [currentmonthValue, setcurrentmonthValue] = useState(currentMonths[0].value);
 
@@ -74,9 +77,11 @@ export default function App() {
         </View>
         {/*These buttons will need to changed to display correcrtly on devices with different screen sizes*/}
         <View style={styles.weekdaySelector}>
+        {/*Can change to 0*/}
         <TouchableOpacity style={[styles.nextWeek, {marginLeft: -25}]}>
             <Text style={{textAlign: 'center', fontSize: 24, lineHeight: 38, color: '#000000'}}
-            onPress={() => alert('Previous week pressed!')}
+            onPress={() => setweeksintoFuture(weeksintoFuture - 1)}
+            disabled={weeksintoFuture === -1}
             >‹‹</Text>
           </TouchableOpacity>
           <Weekdays 
@@ -85,7 +90,7 @@ export default function App() {
           />
           <TouchableOpacity style={[styles.nextWeek, {marginLeft: 320}]}>
             <Text style={{textAlign: 'center', fontSize: 24, lineHeight: 38, color: '#000000'}}
-            onPress={() => alert('Next week pressed!')}
+            onPress={() => setweeksintoFuture(weeksintoFuture + 1)}
             >››</Text>
           </TouchableOpacity>
         </View>
