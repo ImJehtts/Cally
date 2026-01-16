@@ -78,12 +78,20 @@ export default function App() {
         {/*These buttons will need to changed to display correcrtly on devices with different screen sizes*/}
         <View style={styles.weekdaySelector}>
         {/*Can change to 0*/}
-        <TouchableOpacity style={[styles.nextWeek, {marginLeft: -25}]}>
-            <Text style={{textAlign: 'center', fontSize: 24, lineHeight: 38, color: '#000000'}}
-            onPress={() => setweeksintoFuture(weeksintoFuture - 1)}
-            disabled={weeksintoFuture === -1}
-            >‹‹</Text>
-          </TouchableOpacity>
+        <View style={styles.goBack}>
+          <TouchableOpacity style={[styles.previousWeek, {marginLeft: -25, marginBottom:10}]}>
+              <Text style={{textAlign: 'center', fontSize: 18, lineHeight: 22, color: '#000000'}}
+              onPress={() => setweeksintoFuture(0)}
+              disabled={weeksintoFuture === 0}
+              >‹‹</Text>
+            </TouchableOpacity>
+          <TouchableOpacity style={[styles.previousWeek, {marginLeft: -25, marginTop:55}]}>
+              <Text style={{textAlign: 'center', fontSize: 18, lineHeight: 22, color: '#000000'}}
+              onPress={() => setweeksintoFuture(weeksintoFuture - 1)}
+              disabled={weeksintoFuture === -1}
+              >‹</Text>
+            </TouchableOpacity>
+          </View>
           <Weekdays 
             week={currentWeek}
             onDayPress={onDayPress}
@@ -91,7 +99,7 @@ export default function App() {
           <TouchableOpacity style={[styles.nextWeek, {marginLeft: 320}]}>
             <Text style={{textAlign: 'center', fontSize: 24, lineHeight: 38, color: '#000000'}}
             onPress={() => setweeksintoFuture(weeksintoFuture + 1)}
-            >››</Text>
+            >›</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -159,6 +167,20 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 30,
     height: 45,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderColor: '#CBB08E',
+    borderWidth: 2.5, 
+  },
+  goBack: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  previousWeek: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     borderColor: '#CBB08E',
