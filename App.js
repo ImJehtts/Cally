@@ -67,7 +67,6 @@ export default function App() {
             value={currentmonthValue}
             onChange={item => {
               setcurrentmonthValue(item.value);
-              console.log('selected month:', item.label, item.value);
             }}
             selectedTextStyle={styles.selectedTextStyle}
             renderItem={item => <Text style={styles.itemText}>{item.label}</Text>}
