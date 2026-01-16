@@ -72,11 +72,22 @@ export default function App() {
             renderItem={item => <Text style={styles.itemText}>{item.label}</Text>}
           />
         </View>
+        {/*These buttons will need to changed to display correcrtly on devices with different screen sizes*/}
         <View style={styles.weekdaySelector}>
+        <TouchableOpacity style={[styles.nextWeek, {marginLeft: -25}]}>
+            <Text style={{textAlign: 'center', fontSize: 24, lineHeight: 38, color: '#000000'}}
+            onPress={() => alert('Previous week pressed!')}
+            >‹‹</Text>
+          </TouchableOpacity>
           <Weekdays 
-          week={currentWeek}
-          onDayPress={onDayPress}
+            week={currentWeek}
+            onDayPress={onDayPress}
           />
+          <TouchableOpacity style={[styles.nextWeek, {marginLeft: 320}]}>
+            <Text style={{textAlign: 'center', fontSize: 24, lineHeight: 38, color: '#000000'}}
+            onPress={() => alert('Next week pressed!')}
+            >››</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -132,5 +143,20 @@ const styles = StyleSheet.create({
     padding: 7,
     fontSize: 18,
     textAlign : 'center',
+  },
+  weekdaySelector: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  nextWeek: {
+    position: 'absolute',
+    marginTop: 20,
+    width: 30,
+    height: 45,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderColor: '#CBB08E',
+    borderWidth: 2.5, 
   },
 });
