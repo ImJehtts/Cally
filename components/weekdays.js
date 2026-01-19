@@ -5,6 +5,7 @@ const Weekdays = ({week, onDayPress}) => {
     return (
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             <View style={styles.weekdayContainer}>
+              {/*Each day of the week is rendered individually using mapping*/}
             {week.map((item) => (
                 <TouchableOpacity 
                 key = {item.day}

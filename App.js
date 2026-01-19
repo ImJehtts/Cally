@@ -8,6 +8,7 @@ import Weekdays from './components/weekdays';
 
 export default function App() {
   
+   {/*Grabs current month and next 3*/}
   const currentMonths = Array.from({ length: 4 }, (_, i) => {
     const date = new Date();
     date.setMonth(date.getMonth() + i);
@@ -21,6 +22,9 @@ export default function App() {
   const [weeksintoFuture, setweeksintoFuture] = useState(0);
   const [currentWeek, setCurrentWeek] = useState([]);
 
+   {/*Grabs current week and then the weeksintoFuture is controller by the next arrow button
+    When it is pressed, we look that many weeks into future
+    useEffect is used with the weeksintoFuture dependency so everytime it's changed, we grab the next week as well*/}
   useEffect(() => {
     const currentDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
@@ -37,10 +41,13 @@ export default function App() {
   
   const [currentmonthValue, setcurrentmonthValue] = useState(currentMonths[0].value);
 
+  {/*Need to use for function once accounts added*/}
   const profilePicturePressed = async () => {
     alert('Profile Picture pressed!');
   };
 
+  {/*When a day is pressed, we just re-create the currentWeek array and assign the selected day to the day that was pressed
+    This is used for the weekdays component*/}
   const onDayPress = (pressedDay) => {
     setCurrentWeek(prev =>
       prev.map(item => ({
@@ -92,6 +99,7 @@ export default function App() {
               >‹</Text>
             </TouchableOpacity>
           </View>
+            {/*This is where the weekdays of the current week are passed. The onDayPress is also passed so it can call back here*/}
           <Weekdays 
             week={currentWeek}
             onDayPress={onDayPress}
