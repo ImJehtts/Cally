@@ -8,7 +8,7 @@ import Weekdays from './components/weekdays';
 
 export default function App() {
   
-   {/*Grabs current month and next 3*/}
+  //Grabs previous month, current month and next 4
   const currentMonths = Array.from({ length: 6 }, (_, i) => {
     const date = new Date();
     date.setMonth(date.getMonth() - 1 + i);
@@ -18,7 +18,8 @@ export default function App() {
       value: String(date.getMonth() + 1).padStart(2, '0'),
     };
   });
-
+ 
+  //Base date is the date we are currently looking at
   const [baseDate, setBaseDate] = useState(new Date());
   const [currentWeek, setCurrentWeek] = useState([]);
   const [currentmonthValue, setcurrentmonthValue] = useState(
@@ -26,19 +27,22 @@ export default function App() {
   );
   const today = new Date();
 
+  //The earliest date a user can go into. Max previous week from 1st of current month
   const minDate = new Date(today.getFullYear(), today.getMonth(), 1);
   minDate.setDate(minDate.getDate() - 7);
 
+  //The furthest date a user can go into. Max next week into last of current quarter of months
   const maxDate = new Date(today.getFullYear(), today.getMonth() + 4, 1);
   maxDate.setDate(maxDate.getDate() + 6);
 
-   {/*Grabs current week and then the weeksintoFuture is controller by the next arrow button
-    When it is pressed, we look that many weeks into future
-    useEffect is used with the weeksintoFuture dependency so everytime it's changed, we grab the next week as well*/}
   useEffect(() => {
+
+    //Start at week of selected day
     const startOfWeek = new Date(baseDate);
+    //Treats Sunday like day 7 so Monday is Day 1
     const dayOfWeek = baseDate.getDay() === 0 ? 7 : baseDate.getDay();
 
+    //Move to Monday of current week
     startOfWeek.setDate(baseDate.getDate() - dayOfWeek + 1);
 
     const week = Array.from({ length: 7 }, (_, i) => {
@@ -60,17 +64,19 @@ export default function App() {
     );
   }, [baseDate]);
 
-  {/*Need to use for function once accounts added*/}
+  //Need to use for function once accounts added
   const profilePicturePressed = async () => {
     alert('Profile Picture pressed!');
   };
 
-  {/*When a day is pressed, we just re-create the currentWeek array and assign the selected day to the day that was pressed
-    This is used for the weekdays component*/}
+  //When a weekday is tapped, update the selected date
   const onDayPress = (pressedDay) => {
+    //currentWeek is the week being displayed so we just find the day that was pressed
     const selected = currentWeek.find(d => d.day === pressedDay);
     if (!selected) return;
 
+    /*When a weekday is tapped, update the selected date. This explains the logic of how we move weeks/months. 
+    The current date is treated as the "baseDate" and all changes are made based on that.*/
     setBaseDate(
       new Date(selected.year, selected.month, selected.value)
     );
@@ -96,8 +102,18 @@ export default function App() {
             value={currentmonthValue}
             onChange={item => {
               const newDate = new Date(baseDate);
+              //item.value is month in MM format so we set the month accordingly to the selected month in the dropdown
               newDate.setMonth(parseInt(item.value) - 1);
-              newDate.setDate(1);
+              //This if statement is used to see if we are selecting first month in dropdown, which only contains it's last week
+              if (item.value === currentMonths[0].value) {
+                //Format is: new Date(year, monthIndex, 0) with 0 meaning last day of previous month
+                const lastDayOfMonth = new Date(newDate.getFullYear(), parseInt(item.value), 0);
+                // Jump to the last allowed date of that month
+                newDate.setDate(Math.max(lastDayOfMonth.getDate(), minDate.getDate()));
+              } else {
+                //Set date to 1st of month
+                newDate.setDate(1);
+              }
               if (newDate >= minDate && newDate <= maxDate) {
                 setBaseDate(newDate);
               }
