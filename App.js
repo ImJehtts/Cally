@@ -19,27 +19,46 @@ export default function App() {
     };
   });
 
-  const [weeksintoFuture, setweeksintoFuture] = useState(0);
+  const [baseDate, setBaseDate] = useState(new Date());
   const [currentWeek, setCurrentWeek] = useState([]);
+  const [currentmonthValue, setcurrentmonthValue] = useState(
+    String(new Date().getMonth() + 1).padStart(2, '0')
+  );
+  const today = new Date();
+
+  const minDate = new Date(today.getFullYear(), today.getMonth(), 1);
+  minDate.setDate(minDate.getDate() - 7);
+
+  const maxDate = new Date(today.getFullYear(), today.getMonth() + 4, 1);
+  maxDate.setDate(maxDate.getDate() + 6);
 
    {/*Grabs current week and then the weeksintoFuture is controller by the next arrow button
     When it is pressed, we look that many weeks into future
     useEffect is used with the weeksintoFuture dependency so everytime it's changed, we grab the next week as well*/}
   useEffect(() => {
-    const currentDays = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() + i - date.getDay() + (1+(weeksintoFuture*7))); 
-  
+    const startOfWeek = new Date(baseDate);
+    const dayOfWeek = baseDate.getDay() === 0 ? 7 : baseDate.getDay();
+
+    startOfWeek.setDate(baseDate.getDate() - dayOfWeek + 1);
+
+    const week = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + i);
+
       return {
-        day: date.toLocaleString('default', {weekday: 'short'}),
+        day: date.toLocaleString('default', { weekday: 'short' }),
         value: date.getDate(),
-        selected: i === new Date().getDay() - 1 && weeksintoFuture === 0,      
+        month: date.getMonth(),
+        year: date.getFullYear(),
+        selected: date.toDateString() === baseDate.toDateString(),
       };
     });
-    setCurrentWeek(currentDays); 
-  }, [weeksintoFuture]);
-  
-  const [currentmonthValue, setcurrentmonthValue] = useState(currentMonths[0].value);
+
+    setCurrentWeek(week); 
+    setcurrentmonthValue(
+      String(baseDate.getMonth() + 1).padStart(2, '0')
+    );
+  }, [baseDate]);
 
   {/*Need to use for function once accounts added*/}
   const profilePicturePressed = async () => {
@@ -49,11 +68,11 @@ export default function App() {
   {/*When a day is pressed, we just re-create the currentWeek array and assign the selected day to the day that was pressed
     This is used for the weekdays component*/}
   const onDayPress = (pressedDay) => {
-    setCurrentWeek(prev =>
-      prev.map(item => ({
-        ...item,
-        selected: item.day === pressedDay,
-      }))
+    const selected = currentWeek.find(d => d.day === pressedDay);
+    if (!selected) return;
+
+    setBaseDate(
+      new Date(selected.year, selected.month, selected.value)
     );
   };
 
@@ -76,7 +95,12 @@ export default function App() {
             valueField="value"
             value={currentmonthValue}
             onChange={item => {
-              setcurrentmonthValue(item.value);
+              const newDate = new Date(baseDate);
+              newDate.setMonth(parseInt(item.value) - 1);
+              newDate.setDate(1);
+              if (newDate >= minDate && newDate <= maxDate) {
+                setBaseDate(newDate);
+              }
             }}
             selectedTextStyle={styles.selectedTextStyle}
             renderItem={item => <Text style={styles.itemText}>{item.label}</Text>}
@@ -88,14 +112,24 @@ export default function App() {
         <View style={styles.goBack}>
           <TouchableOpacity style={[styles.previousWeek, {marginLeft: -25, marginBottom:10}]}>
               <Text style={{textAlign: 'center', fontSize: 18, lineHeight: 22, color: '#000000'}}
-              onPress={() => setweeksintoFuture(0)}
-              disabled={weeksintoFuture === 0}
+               onPress={() => {
+                const newDate = new Date(baseDate);
+                newDate.setDate(1);
+                if (newDate >= minDate) {
+                  setBaseDate(newDate);
+                }
+              }}
               >‹‹</Text>
             </TouchableOpacity>
           <TouchableOpacity style={[styles.previousWeek, {marginLeft: -25, marginTop:55}]}>
               <Text style={{textAlign: 'center', fontSize: 18, lineHeight: 22, color: '#000000'}}
-              onPress={() => setweeksintoFuture(weeksintoFuture - 1)}
-              disabled={weeksintoFuture === -1}
+              onPress={() => {
+                const newDate = new Date(baseDate);
+                newDate.setDate(baseDate.getDate() - 7);
+                if (newDate > minDate) {
+                  setBaseDate(newDate);
+                }
+              }}
               >‹</Text>
             </TouchableOpacity>
           </View>
@@ -106,7 +140,13 @@ export default function App() {
           />
           <TouchableOpacity style={[styles.nextWeek, {marginLeft: 320}]}>
             <Text style={{textAlign: 'center', fontSize: 24, lineHeight: 38, color: '#000000'}}
-            onPress={() => setweeksintoFuture(weeksintoFuture + 1)}
+            onPress={() => {
+              const newDate = new Date(baseDate);
+              newDate.setDate(baseDate.getDate() + 7);
+              if (newDate <= maxDate) {
+                setBaseDate(newDate);
+              }
+            }}
             >›</Text>
           </TouchableOpacity>
         </View>
