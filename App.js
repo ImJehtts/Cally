@@ -9,9 +9,9 @@ import Weekdays from './components/weekdays';
 export default function App() {
   
    {/*Grabs current month and next 3*/}
-  const currentMonths = Array.from({ length: 4 }, (_, i) => {
+  const currentMonths = Array.from({ length: 6 }, (_, i) => {
     const date = new Date();
-    date.setMonth(date.getMonth() + i);
+    date.setMonth(date.getMonth() - 1 + i);
   
     return {
       label: date.toLocaleString('default', { month: 'long', year: 'numeric' }),
