@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { Dropdown } from 'react-native-element-dropdown';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Weekdays from './components/weekdays';
+import Daytasks from './components/daytasks';
 
 
 export default function App() {
@@ -166,6 +167,10 @@ export default function App() {
             >›</Text>
           </TouchableOpacity>
         </View>
+        <ScrollView style={styles.scheduleScroll}>
+          <Text style={styles.todayHeader}>Today's Schedule</Text>
+          <Daytasks/>
+        </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -249,5 +254,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#CBB08E',
     borderWidth: 2.5, 
+  },
+  todayHeader: {
+    marginTop: 15,
+    marginLeft: 15,
+    fontSize: 18,
+    fontWeight: '350',
+    color: '#7A5C3E',
+  },
+  scheduleScroll: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
   },
 });
